@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vercel/
+*.log
+*.zip
+*.tmp
+.env
+.env.*
+
+.vercel
+public/assets/video/VN20260626_200420.mp4
+public/assets/video/Aquarium Setup Tour.mp4
