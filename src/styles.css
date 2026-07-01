@@ -666,6 +666,8 @@ textarea {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(54, 232, 255, 0.16), transparent 66%);
   mix-blend-mode: screen;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .bio-bubble {
@@ -679,6 +681,8 @@ textarea {
   animation: bioBubble calc(9s + (var(--i) * 0.45s)) infinite linear;
   animation-delay: calc(var(--i) * -0.42s);
   opacity: 0.68;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .swimmer {
@@ -692,6 +696,8 @@ textarea {
   animation: swim calc(16s + var(--i) * 1.4s) infinite linear;
   animation-delay: calc(var(--i) * -1.2s);
   opacity: 0.24;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .swimmer::after {
@@ -1032,6 +1038,27 @@ textarea {
 
 .book-btn {
   padding: 0 18px;
+}
+
+.social-btn {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 9px 30px rgba(168, 85, 247, 0.35);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.5);
 }
 
 .hero-copy {

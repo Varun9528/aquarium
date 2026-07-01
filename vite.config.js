@@ -6,4 +6,17 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom'],
+          'animations': ['framer-motion', 'gsap'],
+        },
+      },
+    },
+  },
+  optimize: {
+    exclude: ['node_modules'],
+  },
 });

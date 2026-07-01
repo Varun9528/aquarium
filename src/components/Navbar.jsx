@@ -29,9 +29,14 @@ function Navbar() {
           ))}
         </nav>
 
-        <a href="#contact" className="inline-flex items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-950 shadow-xl transition hover:bg-cyan-200">
-          Book Now
-        </a>
+        <div className="flex items-center gap-3">
+          <a href="/social" className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] text-white shadow-lg shadow-purple-500/50 transition hover:shadow-lg hover:shadow-purple-400/70 hover:scale-105">
+            Connect With Us
+          </a>
+          <a href="#contact" className="inline-flex items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-slate-950 shadow-xl transition hover:bg-cyan-200">
+            Book Now
+          </a>
+        </div>
       </div>
     </motion.header>
   );

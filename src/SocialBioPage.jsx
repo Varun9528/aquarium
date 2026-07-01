@@ -41,7 +41,7 @@ const socials = [
   ['Facebook', 'Updates, offers and customer stories', 'FB', '#4aa3ff', images.studio, 'https://www.facebook.com/share/1BfCnogp7X/'],
   ['YouTube', 'Aquascaping tours and care videos', 'YT', '#ff4242', images.coral, 'https://m.youtube.com/%40aarjavpetzone?fbclid=PAb21jcASvEPJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAad0fE8NIjUiaZZTW80Qc_1zri-ssXQ4gw5R2v0DfmH75Oj1bsmEoA9TbvQdPA_aem_MyKp1gNtcSmeHO4swQ6tig'],
   ['Google Maps', 'Find our premium aquarium studio', 'GM', '#35e79a', images.nano, '#book'],
-  ['Website', 'Explore collections, services and plans', 'WEB', '#36e8ff', images.reef, '#book'],
+  ['Website', 'Explore collections, services and plans', 'WEB', '#36e8ff', images.reef, 'https://aquarium-lilac.vercel.app/'],
   ['Email', 'Send your aquarium requirement', 'MAIL', '#eaf8ff', images.studio, '#book'],
   ['Pinterest', 'Moodboards for planted aquariums', 'PIN', '#ff6b83', images.coral, '#book'],
   ['Telegram', 'Join alerts for new imported fish', 'TG', '#24c8ff', images.planted, '#book'],
@@ -102,8 +102,8 @@ function AmbientLayer() {
       <div className="coral coral-right" />
       <div className="jelly jelly-one" />
       <div className="jelly jelly-two" />
-      {Array.from({ length: 34 }).map((_, index) => <span className="bio-bubble" style={{ '--i': index }} key={index} />)}
-      {Array.from({ length: 8 }).map((_, index) => <span className="swimmer" style={{ '--i': index }} key={index} />)}
+      {Array.from({ length: 16 }).map((_, index) => <span className="bio-bubble" style={{ '--i': index }} key={index} />)}
+      {Array.from({ length: 4 }).map((_, index) => <span className="swimmer" style={{ '--i': index }} key={index} />)}
       <div className="blur-orb orb-one" />
       <div className="blur-orb orb-two" />
     </div>
@@ -167,6 +167,7 @@ function SectionTitle({ kicker, title }) {
 export default function SocialBioPage() {
   const pageRef = useRef(null);
   const year = useMemo(() => new Date().getFullYear(), []);
+  const throttleRef = useRef(0);
 
   useEffect(() => {
     const root = pageRef.current;
@@ -174,10 +175,16 @@ export default function SocialBioPage() {
 
     const aura = root.querySelector('.mouse-aura');
     const magnetic = gsap.utils.toArray(root.querySelectorAll('.magnetic'));
+    
     const onMove = (event) => {
+      const now = Date.now();
+      if (now - throttleRef.current < 16) return;
+      throttleRef.current = now;
+
       const x = event.clientX;
       const y = event.clientY;
       gsap.to(aura, { x, y, duration: 0.45, ease: 'power3.out' });
+      
       magnetic.forEach((card) => {
         const rect = card.getBoundingClientRect();
         const dx = x - (rect.left + rect.width / 2);
@@ -191,7 +198,7 @@ export default function SocialBioPage() {
       });
     };
 
-    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointermove', onMove, { passive: true });
     gsap.to(root.querySelectorAll('.parallax-float'), {
       yPercent: -7,
       scrollTrigger: undefined,

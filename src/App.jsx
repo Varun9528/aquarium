@@ -118,7 +118,10 @@ function Nav() {
           </a>
         ))}
       </nav>
-      <a className="book-btn" href="#contact">Book Now</a>
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <a className="social-btn" href="/social">Connect With Us</a>
+        <a className="book-btn" href="#contact">Book Now</a>
+      </div>
     </header>
   );
 }
