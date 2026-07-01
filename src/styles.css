@@ -811,9 +811,6 @@ textarea {
     transform: translateX(0);
   }
 }
-    transform: translateX(calc(100vw + 180px));
-  }
-}
 
 @keyframes tinySwim {
   50% {
