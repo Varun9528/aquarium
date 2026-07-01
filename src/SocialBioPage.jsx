@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
 
 const asset = (name) => `/assets/${name.split('/').map(encodeURIComponent).join('/')}`;
 const fastAsset = (name) => asset(`fast/${name.replace(/\.[^.]+$/, '.jpg').split('/').join('__')}`);
@@ -22,17 +21,9 @@ const images = {
   nano: fastAsset('photos/other/Nano Desk Tank.jpg'),
 };
 
-const container = {
+const simpleFade = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.07, delayChildren: 0.08 },
-  },
-};
-
-const rise = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(10px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 const socials = [
@@ -97,13 +88,8 @@ function AmbientLayer() {
   return (
     <div className="social-ambient" aria-hidden="true">
       <div className="surface-rays" />
-      <div className="mouse-aura" />
       <div className="coral coral-left" />
       <div className="coral coral-right" />
-      <div className="jelly jelly-one" />
-      <div className="jelly jelly-two" />
-      {Array.from({ length: 16 }).map((_, index) => <span className="bio-bubble" style={{ '--i': index }} key={index} />)}
-      {Array.from({ length: 4 }).map((_, index) => <span className="swimmer" style={{ '--i': index }} key={index} />)}
       <div className="blur-orb orb-one" />
       <div className="blur-orb orb-two" />
     </div>
@@ -112,7 +98,7 @@ function AmbientLayer() {
 
 function GoogleRating() {
   return (
-    <motion.section className="rating-card premium-glass" variants={rise}>
+    <motion.section className="rating-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
       <div className="google-mark" aria-label="Google">
         <span>G</span>
       </div>
@@ -130,103 +116,55 @@ function GoogleRating() {
   );
 }
 
-function SocialCard({ item, index }) {
+const SocialCard = ({ item, index }) => {
   const [title, description, icon, color, image, url] = item;
 
   return (
     <motion.a
-      className="social-link-card premium-glass magnetic"
+      className="social-link-card premium-glass"
       href={url}
       target={url.startsWith('http') ? '_blank' : undefined}
       rel={url.startsWith('http') ? 'noreferrer' : undefined}
-      variants={rise}
-      whileHover={{ y: -7, scale: 1.015 }}
-      whileTap={{ scale: 0.985 }}
-      style={{ '--accent': color, '--delay': `${index * 0.14}s`, backgroundImage: `linear-gradient(120deg, rgba(2, 6, 23, .82), rgba(6, 28, 63, .58)), url("${image}")` }}
+      variants={simpleFade}
+      initial="hidden"
+      whileInView="show"
+      style={{ '--accent': color, backgroundImage: `linear-gradient(120deg, rgba(2, 6, 23, .82), rgba(6, 28, 63, .58)), url("${image}")` }}
     >
       <span className="social-icon">{icon}</span>
       <span className="social-text">
         <strong>{title}</strong>
         <small>{description}</small>
       </span>
-      <span className="tiny-fish" />
       <span className="arrow">→</span>
     </motion.a>
   );
-}
+};
 
-function SectionTitle({ kicker, title }) {
-  return (
-    <motion.div className="bio-section-title" variants={rise}>
-      <p>{kicker}</p>
-      <h2>{title}</h2>
-    </motion.div>
-  );
-}
+const SectionTitle = ({ kicker, title }) => (
+  <motion.div className="bio-section-title" variants={simpleFade} initial="hidden" whileInView="show">
+    <p>{kicker}</p>
+    <h2>{title}</h2>
+  </motion.div>
+);
 
 export default function SocialBioPage() {
-  const pageRef = useRef(null);
   const year = useMemo(() => new Date().getFullYear(), []);
-  const throttleRef = useRef(0);
-
-  useEffect(() => {
-    const root = pageRef.current;
-    if (!root) return undefined;
-
-    const aura = root.querySelector('.mouse-aura');
-    const magnetic = gsap.utils.toArray(root.querySelectorAll('.magnetic'));
-    
-    const onMove = (event) => {
-      const now = Date.now();
-      if (now - throttleRef.current < 16) return;
-      throttleRef.current = now;
-
-      const x = event.clientX;
-      const y = event.clientY;
-      gsap.to(aura, { x, y, duration: 0.45, ease: 'power3.out' });
-      
-      magnetic.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const dx = x - (rect.left + rect.width / 2);
-        const dy = y - (rect.top + rect.height / 2);
-        const dist = Math.hypot(dx, dy);
-        if (dist < 180) {
-          gsap.to(card, { x: dx * 0.025, y: dy * 0.025, duration: 0.35, ease: 'power2.out' });
-        } else {
-          gsap.to(card, { x: 0, y: 0, duration: 0.55, ease: 'power2.out' });
-        }
-      });
-    };
-
-    window.addEventListener('pointermove', onMove, { passive: true });
-    gsap.to(root.querySelectorAll('.parallax-float'), {
-      yPercent: -7,
-      scrollTrigger: undefined,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-      stagger: 0.22,
-    });
-
-    return () => window.removeEventListener('pointermove', onMove);
-  }, []);
 
   return (
-    <main className="social-bio-page" ref={pageRef}>
+    <main className="social-bio-page">
       <AmbientLayer />
 
-      <motion.div className="bio-shell" variants={container} initial="hidden" animate="show">
-        <motion.header className="bio-hero premium-glass" variants={rise}>
+      <div className="bio-shell">
+        <motion.header className="bio-hero premium-glass" variants={simpleFade} initial="hidden" animate="show">
           <div className="hero-waterline" />
-          <div className="profile-wrap parallax-float">
+          <div className="profile-wrap">
             <div className="brand-logo">
               <span>A</span>
             </div>
-            <img className="hero-betta" src={images.heroFish} alt="Half Moon Betta Fish swimming beside AquaWorld profile" />
+            <img className="hero-betta" src={images.heroFish} alt="Half Moon Betta Fish swimming beside AquaWorld profile" loading="eager" decoding="sync" />
           </div>
 
-          <motion.div className="hero-copy-bio" variants={rise}>
+          <motion.div className="hero-copy-bio" variants={simpleFade}>
             <span className="active-pill"><i /> Active Now</span>
             <h1>AquaWorld</h1>
             <p className="subtitle">Premium Aquarium Studio</p>
@@ -236,51 +174,51 @@ export default function SocialBioPage() {
 
         <GoogleRating />
 
-        <motion.section className="social-grid" variants={container}>
+        <section className="social-grid">
           {socials.map((item, index) => <SocialCard item={item} index={index} key={item[0]} />)}
-        </motion.section>
+        </section>
 
-        <motion.section className="feature-grid" variants={container}>
+        <section className="feature-grid">
           {features.map(([title, text, icon]) => (
-            <motion.article className="feature-card premium-glass" variants={rise} key={title}>
+            <motion.article className="feature-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show" key={title}>
               <span>{icon}</span>
               <h3>{title}</h3>
               <p>{text}</p>
             </motion.article>
           ))}
-        </motion.section>
+        </section>
 
-        <motion.section className="bio-panel premium-glass" variants={container}>
+        <motion.section className="bio-panel premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
           <SectionTitle kicker="Our Services" title="Everything your aquarium needs, handled by specialists." />
           <div className="service-cloud">
-            {services.map((service) => <motion.span variants={rise} key={service}>{service}</motion.span>)}
+            {services.map((service) => <span key={service}>{service}</span>)}
           </div>
         </motion.section>
 
-        <motion.section className="fish-gallery-wrap" variants={container}>
+        <section className="fish-gallery-wrap">
           <SectionTitle kicker="Fish Collection" title="Premium freshwater showpieces and community favorites." />
           <div className="fish-gallery">
             {fish.map(([name, image]) => (
-              <motion.article className="fish-tile" variants={rise} key={name}>
+              <article className="fish-tile" key={name}>
                 <img src={image} alt={name} loading="lazy" decoding="async" />
                 <strong>{name}</strong>
-              </motion.article>
+              </article>
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        <motion.section className="why-bio premium-glass" variants={container}>
+        <motion.section className="why-bio premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
           <SectionTitle kicker="Why Choose Us" title="Designed for healthy fish and luxurious interiors." />
           <div className="reason-grid">
-            {reasons.map((reason) => <motion.span variants={rise} key={reason}>{reason}</motion.span>)}
+            {reasons.map((reason) => <span key={reason}>{reason}</span>)}
           </div>
         </motion.section>
 
-        <motion.section className="reviews-bio" variants={container}>
+        <section className="reviews-bio">
           <SectionTitle kicker="Customer Reviews" title="Loved by aquarium owners who want the full premium care." />
           <div className="review-grid">
             {reviews.map(([name, text, image]) => (
-              <motion.article className="review-card premium-glass" variants={rise} key={name}>
+              <motion.article className="review-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show" key={name}>
                 <div>
                   <img src={image} alt={`${name} avatar`} loading="lazy" decoding="async" />
                   <span>★★★★★</span>
@@ -290,20 +228,20 @@ export default function SocialBioPage() {
               </motion.article>
             ))}
           </div>
-        </motion.section>
+        </section>
 
-        <motion.section className="bottom-cta premium-glass" id="book" variants={rise}>
+        <motion.section className="bottom-cta premium-glass" id="book" variants={simpleFade} initial="hidden" whileInView="show">
           <h2>Book Your Luxury Aquarium Experience</h2>
           <p>Free consultation for home, office, showroom and restaurant aquarium projects.</p>
           <div>
-            <a className="cta-main magnetic" href="tel:+910000000000">Book Free Consultation</a>
-            <a className="cta-soft magnetic" href="tel:+910000000000">Call Now</a>
-            <a className="cta-soft magnetic" href="https://wa.me/910000000000">WhatsApp Now</a>
+            <a className="cta-main" href="tel:+910000000000">Book Free Consultation</a>
+            <a className="cta-soft" href="tel:+910000000000">Call Now</a>
+            <a className="cta-soft" href="https://wa.me/910000000000">WhatsApp Now</a>
           </div>
         </motion.section>
 
         <footer className="bio-footer">AquaWorld © {year} · Premium Aquarium Studio</footer>
-      </motion.div>
+      </div>
     </main>
   );
 }
