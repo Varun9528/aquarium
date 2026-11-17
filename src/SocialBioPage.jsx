@@ -1,246 +1,241 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-
-const asset = (name) => `/assets/${name.split('/').map(encodeURIComponent).join('/')}`;
-const fastAsset = (name) => asset(`fast/${name.replace(/\.[^.]+$/, '.jpg').split('/').join('__')}`);
-
-const images = {
-  heroFish: fastAsset('photos/fish/blue half-moon.jpg'),
-  betta: fastAsset('photos/fish/betta fish.jpg'),
-  arowana: fastAsset('photos/fish/Arowana fish.jpg'),
-  discus: fastAsset('photos/fish/Discus Fish.jpg'),
-  goldfish: fastAsset('photos/fish/gold fish.jpg'),
-  guppy: fastAsset('photos/fish/guppy fish.png'),
-  angelfish: fastAsset('photos/fish/Angelfish.jpg'),
-  molly: fastAsset('photos/fish/Golden Molly.jpg'),
-  gourami: fastAsset('photos/fish/Pearl Gourami.jpg'),
-  reef: fastAsset('huy-phan-_LWxQJFgpyo-unsplash.jpg'),
-  planted: fastAsset('huy-phan-nJrSZM_OaJg-unsplash.jpg'),
-  studio: fastAsset('photos/other/Aquarium Studio.jpg'),
-  coral: fastAsset('photos/other/Premium Reef Look.jpg'),
-  nano: fastAsset('photos/other/Nano Desk Tank.jpg'),
-};
-
-const simpleFade = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.3 } },
-};
-
-const socials = [
-  ['WhatsApp', 'Chat for fish, tanks and quick support', 'WA', '#25d366', images.planted, '#book'],
-  ['Instagram', 'Daily aquarium reels and luxury setups', 'IG', '#ff4fd8', images.reef, 'https://www.instagram.com/aarjavpetzone?igsh=YWpwcmw5cGh4YTE1'],
-  ['Facebook', 'Updates, offers and customer stories', 'FB', '#4aa3ff', images.studio, 'https://www.facebook.com/share/1BfCnogp7X/'],
-  ['YouTube', 'Aquascaping tours and care videos', 'YT', '#ff4242', images.coral, 'https://m.youtube.com/%40aarjavpetzone?fbclid=PAb21jcASvEPJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAad0fE8NIjUiaZZTW80Qc_1zri-ssXQ4gw5R2v0DfmH75Oj1bsmEoA9TbvQdPA_aem_MyKp1gNtcSmeHO4swQ6tig'],
-  ['Google Maps', 'Find our premium aquarium studio', 'GM', '#35e79a', images.nano, '#book'],
-  ['Website', 'Explore collections, services and plans', 'WEB', '#36e8ff', images.reef, 'https://aquarium-lilac.vercel.app/'],
-  ['Email', 'Send your aquarium requirement', 'MAIL', '#eaf8ff', images.studio, '#book'],
-  ['Pinterest', 'Moodboards for planted aquariums', 'PIN', '#ff6b83', images.coral, '#book'],
-  ['Telegram', 'Join alerts for new imported fish', 'TG', '#24c8ff', images.planted, '#book'],
-];
-
-const features = [
-  ['Expert Team', 'Senior aquarists for every build', '01'],
-  ['Premium Imported Fish', 'Healthy, quarantined and vibrant', '02'],
-  ['Aquascaping', 'Natural layouts with cinematic depth', '03'],
-  ['Lifetime Maintenance', 'Long-term care for stable tanks', '04'],
-];
-
-const services = [
-  'Aquarium Setup',
-  'Aquascaping',
-  'Maintenance',
-  'Water Testing',
-  'Fish Treatment',
-  'Aquarium Cleaning',
-  'Custom Aquarium',
-  'Aquarium Accessories',
-  'Fish Food',
-  'Plants',
-  'Emergency Support',
-  'AMC Plans',
-];
-
-const fish = [
-  ['Half Moon Betta', images.heroFish],
-  ['Arowana', images.arowana],
-  ['Flowerhorn', images.discus],
-  ['Discus', images.discus],
-  ['Oscar', images.arowana],
-  ['Koi', images.goldfish],
-  ['Goldfish', images.goldfish],
-  ['Guppy', images.guppy],
-  ['Neon Tetra', images.betta],
-  ['Angelfish', images.angelfish],
-  ['Molly', images.molly],
-  ['Gourami', images.gourami],
-  ['Shrimp', images.nano],
-];
-
-const reasons = ['2500+ Happy Clients', '1000+ Installations', '100+ Imported Fish', 'Premium Quality', 'Healthy Fish', 'Fast Delivery', 'Lifetime Support'];
-
-const reviews = [
-  ['Rohan Mehta', 'AquaWorld made our living room feel like a luxury hotel lobby. The tank is silent, clean and stunning.', images.planted],
-  ['Priya Shah', 'Their imported fish quality is excellent. Every setup detail felt thoughtful and premium.', images.heroFish],
-  ['Arjun Nair', 'Fast service, beautiful aquascape and reliable monthly care. Best aquarium team we have worked with.', images.studio],
-];
-
-function AmbientLayer() {
-  return (
-    <div className="social-ambient" aria-hidden="true">
-      <div className="surface-rays" />
-      <div className="coral coral-left" />
-      <div className="coral coral-right" />
-      <div className="blur-orb orb-one" />
-      <div className="blur-orb orb-two" />
-    </div>
-  );
-}
-
-function GoogleRating() {
-  return (
-    <motion.section className="rating-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
-      <div className="google-mark" aria-label="Google">
-        <span>G</span>
-      </div>
-      <div>
-        <p>Google Rating</p>
-        <strong>4.9 Rating</strong>
-        <span className="stars" aria-label="Five star rating">★★★★★</span>
-      </div>
-      <div className="rating-metrics">
-        <span><b>2500+</b> Happy Customers</span>
-        <span><b>1000+</b> Aquarium Installations</span>
-        <span><b>10+</b> Years Experience</span>
-      </div>
-    </motion.section>
-  );
-}
-
-const SocialCard = ({ item, index }) => {
-  const [title, description, icon, color, image, url] = item;
-
-  return (
-    <motion.a
-      className="social-link-card premium-glass"
-      href={url}
-      target={url.startsWith('http') ? '_blank' : undefined}
-      rel={url.startsWith('http') ? 'noreferrer' : undefined}
-      variants={simpleFade}
-      initial="hidden"
-      whileInView="show"
-      style={{ '--accent': color, backgroundImage: `linear-gradient(120deg, rgba(2, 6, 23, .82), rgba(6, 28, 63, .58)), url("${image}")` }}
-    >
-      <span className="social-icon">{icon}</span>
-      <span className="social-text">
-        <strong>{title}</strong>
-        <small>{description}</small>
-      </span>
-      <span className="arrow">→</span>
-    </motion.a>
-  );
-};
-
-const SectionTitle = ({ kicker, title }) => (
-  <motion.div className="bio-section-title" variants={simpleFade} initial="hidden" whileInView="show">
-    <p>{kicker}</p>
-    <h2>{title}</h2>
-  </motion.div>
-);
+import { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  OFFICIAL_LOGO,
+  OFFICIAL_INSTAGRAM,
+  OFFICIAL_MAPS,
+  OFFICIAL_WEBSITE,
+  OFFICIAL_PHONE
+} from './data/petsData.js';
+import PetReviewGenerator, { OFFICIAL_GOOGLE_REVIEW_URL } from './PetReviewGenerator.jsx';
 
 export default function SocialBioPage() {
-  const year = useMemo(() => new Date().getFullYear(), []);
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+  const [showReviewModal, setShowReviewModal] = useState(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('review') === 'true' || window.location.hash === '#review';
+      }
+    } catch {}
+    return false;
+  });
+
+  // Check if URL specifies review generator
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleHashOrPop = () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('review') === 'true' || window.location.hash === '#review') {
+          setShowReviewModal(true);
+        }
+      };
+      window.addEventListener('popstate', handleHashOrPop);
+      return () => window.removeEventListener('popstate', handleHashOrPop);
+    }
+  }, []);
+
+  const socialLinks = [
+    {
+      id: 'google-review',
+      isReviewTrigger: true,
+      title: 'Google Review',
+      action: 'SHARE YOUR EXPERIENCE',
+      subtitle: 'Create your Google review with AI',
+      accent: '#36e8ff',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="social-card-svg" aria-hidden="true">
+          <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+        </svg>
+      ),
+    },
+    {
+      id: 'instagram',
+      title: 'Instagram',
+      action: 'Follow Us',
+      subtitle: 'Daily updates, exotic breeds & new arrivals',
+      url: OFFICIAL_INSTAGRAM,
+      accent: '#e1306c',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="social-card-svg" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      ),
+    },
+    {
+      id: 'whatsapp',
+      title: 'WhatsApp',
+      action: 'Contact Us',
+      subtitle: `Direct chat with us (${OFFICIAL_PHONE})`,
+      url: 'https://wa.me/918878002071?text=Hi%20Pet%27s%20Heaven%20Indore%2C%20I%27d%20like%20to%20connect%20with%20you.',
+      accent: '#25d366',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="social-card-svg" aria-hidden="true">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+        </svg>
+      ),
+    },
+    {
+      id: 'maps',
+      title: 'Google Maps',
+      action: 'Find Our Store',
+      subtitle: 'Store location & navigation in Indore',
+      url: OFFICIAL_MAPS,
+      accent: '#00e5ff',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="social-card-svg" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      ),
+    },
+    {
+      id: 'website',
+      title: 'Website',
+      action: 'Visit Our Website',
+      subtitle: 'Browse complete catalog: dogs, birds, small pets & fish',
+      url: OFFICIAL_WEBSITE,
+      accent: '#38bdf8',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="social-card-svg" aria-hidden="true">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <main className="social-bio-page">
-      <AmbientLayer />
+    <main className="social-page-wrapper">
+      {/* Subtle HD pet background image with dark cinematic overlay */}
+      <div className="social-bg-layer" aria-hidden="true">
+        <img
+          src="/assets/pets/cinematic_hero_banner.jpg"
+          alt=""
+          className="social-bg-image"
+          loading="eager"
+        />
+        <div className="social-bg-overlay" />
+      </div>
 
-      <div className="bio-shell">
-        <motion.header className="bio-hero premium-glass" variants={simpleFade} initial="hidden" animate="show">
-          <div className="hero-waterline" />
-          <div className="profile-wrap">
-            <div className="brand-logo">
-              <span>A</span>
-            </div>
-            <img className="hero-betta" src={images.heroFish} alt="Half Moon Betta Fish swimming beside AquaWorld profile" loading="eager" decoding="sync" />
-          </div>
+      <div className="social-center-shell">
+        <AnimatePresence mode="wait">
+          {showReviewModal ? (
+            <motion.div
+              key="review-generator"
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.2 }}
+              style={{ width: '100%' }}
+            >
+              <PetReviewGenerator onBack={() => setShowReviewModal(false)} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="social-card"
+              initial={false}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.2 }}
+              className="social-premium-glass-card"
+            >
+              {/* 1. Official Logo inside clean WHITE background container */}
+              <div className="social-logo-white-frame">
+                <img
+                  src={OFFICIAL_LOGO}
+                  alt="Pet's Heaven Indore Logo"
+                  className="social-logo-white-img"
+                  loading="eager"
+                />
+              </div>
 
-          <motion.div className="hero-copy-bio" variants={simpleFade}>
-            <span className="active-pill"><i /> Active Now</span>
-            <h1>AquaWorld</h1>
-            <p className="subtitle">Premium Aquarium Studio</p>
-            <p className="tagline">Bringing Nature Underwater</p>
-          </motion.div>
-        </motion.header>
-
-        <GoogleRating />
-
-        <section className="social-grid">
-          {socials.map((item, index) => <SocialCard item={item} index={index} key={item[0]} />)}
-        </section>
-
-        <section className="feature-grid">
-          {features.map(([title, text, icon]) => (
-            <motion.article className="feature-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show" key={title}>
-              <span>{icon}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </motion.article>
-          ))}
-        </section>
-
-        <motion.section className="bio-panel premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
-          <SectionTitle kicker="Our Services" title="Everything your aquarium needs, handled by specialists." />
-          <div className="service-cloud">
-            {services.map((service) => <span key={service}>{service}</span>)}
-          </div>
-        </motion.section>
-
-        <section className="fish-gallery-wrap">
-          <SectionTitle kicker="Fish Collection" title="Premium freshwater showpieces and community favorites." />
-          <div className="fish-gallery">
-            {fish.map(([name, image]) => (
-              <article className="fish-tile" key={name}>
-                <img src={image} alt={name} loading="lazy" decoding="async" />
-                <strong>{name}</strong>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <motion.section className="why-bio premium-glass" variants={simpleFade} initial="hidden" whileInView="show">
-          <SectionTitle kicker="Why Choose Us" title="Designed for healthy fish and luxurious interiors." />
-          <div className="reason-grid">
-            {reasons.map((reason) => <span key={reason}>{reason}</span>)}
-          </div>
-        </motion.section>
-
-        <section className="reviews-bio">
-          <SectionTitle kicker="Customer Reviews" title="Loved by aquarium owners who want the full premium care." />
-          <div className="review-grid">
-            {reviews.map(([name, text, image]) => (
-              <motion.article className="review-card premium-glass" variants={simpleFade} initial="hidden" whileInView="show" key={name}>
-                <div>
-                  <img src={image} alt={`${name} avatar`} loading="lazy" decoding="async" />
-                  <span>★★★★★</span>
+              {/* 2. Business Heading & Subtitle */}
+              <div className="social-hero-header">
+                <div className="social-status-pill">
+                  <span className="social-status-indicator" />
+                  Verified Store · Indore, MP
                 </div>
-                <p>"{text}"</p>
-                <strong>{name}</strong>
-              </motion.article>
-            ))}
-          </div>
-        </section>
+                <h1 className="social-hero-title">PET'S HEAVEN INDORE</h1>
+                <p className="social-hero-subtitle">Your Trusted Pet Destination in Indore</p>
+              </div>
 
-        <motion.section className="bottom-cta premium-glass" id="book" variants={simpleFade} initial="hidden" whileInView="show">
-          <h2>Book Your Luxury Aquarium Experience</h2>
-          <p>Free consultation for home, office, showroom and restaurant aquarium projects.</p>
-          <div>
-            <a className="cta-main" href="tel:+910000000000">Book Free Consultation</a>
-            <a className="cta-soft" href="tel:+910000000000">Call Now</a>
-            <a className="cta-soft" href="https://wa.me/910000000000">WhatsApp Now</a>
-          </div>
-        </motion.section>
+              {/* 3. Exactly 5 Individual Link Cards (Google Review #1) */}
+              <div className="social-link-stack" role="list">
+                {socialLinks.map((item) => {
+                  if (item.isReviewTrigger) {
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="social-item-card social-review-highlight-card"
+                        onClick={() => setShowReviewModal(true)}
+                        style={{ '--accent-color': item.accent }}
+                      >
+                        <div className="social-item-icon-box" style={{ borderColor: item.accent }}>
+                          {item.icon}
+                        </div>
 
-        <footer className="bio-footer">AquaWorld © {year} · Premium Aquarium Studio</footer>
+                        <div className="social-item-text-box">
+                          <div className="social-item-top-row">
+                            <strong className="social-item-name">{item.title}</strong>
+                            <span className="social-item-badge review-sparkle-badge">
+                              {item.action}
+                            </span>
+                          </div>
+                          <span className="social-item-desc">{item.subtitle}</span>
+                        </div>
+
+                        <div className="social-item-arrow" aria-hidden="true">
+                          ✨
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <a
+                      key={item.id}
+                      className="social-item-card"
+                      href={item.url}
+                      target={item.url?.startsWith('http') ? '_blank' : undefined}
+                      rel={item.url?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      style={{ '--accent-color': item.accent }}
+                    >
+                      <div className="social-item-icon-box" style={{ borderColor: item.accent }}>
+                        {item.icon}
+                      </div>
+
+                      <div className="social-item-text-box">
+                        <div className="social-item-top-row">
+                          <strong className="social-item-name">{item.title}</strong>
+                          <span className="social-item-badge">{item.action}</span>
+                        </div>
+                        <span className="social-item-desc">{item.subtitle}</span>
+                      </div>
+
+                      <div className="social-item-arrow" aria-hidden="true">
+                        →
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+
+              {/* 4. Clean Footer */}
+              <footer className="social-card-footer">
+                <div className="social-footer-meta">
+                  <span>Indore, Madhya Pradesh</span>
+                  <span>•</span>
+                  <a href={OFFICIAL_MAPS} target="_blank" rel="noopener noreferrer">Store Map</a>
+                  <span>•</span>
+                  <a href="/">Website Home</a>
+                </div>
+                <p className="social-footer-copy">
+                  © {currentYear} Pet's Heaven Indore. All rights reserved.
+                </p>
+              </footer>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </main>
   );
